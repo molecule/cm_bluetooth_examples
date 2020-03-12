@@ -17,6 +17,8 @@
 #include "Adafruit_BluefruitLE_UART.h"
 
 #include "BluefruitConfig.h"
+#include "neopixelPlasma.h"
+#include "ledEffects.h"
 
 #if SOFTWARE_SERIAL_AVAILABLE
   #include <SoftwareSerial.h>
@@ -81,7 +83,12 @@ int forceSensorReading;     // the analog reading from the FSR resistor divider
 void setup(void)
 {
 
-  Serial.begin(9600);
+  // Neopixel setup
+  strip.begin();
+  strip.show(); // Initialize all pixels to 'off'
+
+  // Serial setup
+  Serial.begin(115200);
   Serial.println(F("Simple Adafruit Bluefruit Example"));
   Serial.println(F("------------------------------------------------"));
 
@@ -148,22 +155,43 @@ void setup(void)
 /**************************************************************************/
 void loop(void)
 {
+  // Echo received data
+  while ( ble.available() )
+  {
+    int c = ble.read();
 
-  // Read from the attached force sensor.
-  forceSensorReading = analogRead(forceSensorPin); 
-  ble.print(forceSensorReading);
+    Serial.print((char)c);
 
-  if (forceSensorReading == 0) {
-    ble.print(" - No pressure");
-  } else if (forceSensorReading < 10) {
-    ble.print(" - Light touch");
-  } else if (forceSensorReading < 50) {
-    ble.print(" - Light squeeze");
-  } else if (forceSensorReading < 150) {
-    ble.print(" - Medium squeeze");
-  } else {
-    ble.print(" - Big squeeze");
+    // Hex output too, helps w/debugging!
+    Serial.print(" [0x");
+    if (c <= 0xF) Serial.print(F("0"));
+    Serial.print(c, HEX);
+    Serial.print("] ");
+    
+    if (isDigit(c)) {
+      //clever math to interpret the ASCII value as an integer.
+      int asInt = c - '0';
+      
+        switch (asInt) {
+          case 1:
+            //let this function loop for a while since it's pretty.
+            for (int i = 0; i < 300; i++){
+              loopPlasma();
+            }
+            break;
+          case 2:
+            rainbowCycle();
+            break;
+          case 3:
+            blue_sparkles();
+            break;
+          default:
+            //default is optional
+            // will run if nothing else matches.
+            break;
+        }
+      //turn all LEDs off.
+      chase();
+     }   
   }
-  delay(1000);
- 
 }

@@ -149,21 +149,36 @@ void setup(void)
 void loop(void)
 {
 
-  // Read from the attached force sensor.
-  forceSensorReading = analogRead(forceSensorPin); 
-  ble.print(forceSensorReading);
+  // Echo received data
+  while ( ble.available() )
+  {
+    int c = ble.read();
 
-  if (forceSensorReading == 0) {
-    ble.print(" - No pressure");
-  } else if (forceSensorReading < 10) {
-    ble.print(" - Light touch");
-  } else if (forceSensorReading < 50) {
-    ble.print(" - Light squeeze");
-  } else if (forceSensorReading < 150) {
-    ble.print(" - Medium squeeze");
-  } else {
-    ble.print(" - Big squeeze");
+    Serial.print((char)c);
+
+    // Hex output too, helps w/debugging!
+    Serial.print(" [0x");
+    if (c <= 0xF) Serial.print(F("0"));
+    Serial.print(c, HEX);
+    Serial.print("] ");
+    
+    if (isDigit(c)) {
+      //clever math to interpret the ASCII value as an integer.
+      int asInt = c - '0';
+      
+        switch (asInt) {
+        case 1:
+          Serial.print("Received a 1....");
+          break;
+        case 2:
+          Serial.print("Received a 2...");
+          break;
+        default:
+          //default is optional
+          // will run if nothing else matches.
+        // light up LEDs, launch a music file, etc.
+          break;
+      }
+    }   
   }
-  delay(1000);
- 
 }
