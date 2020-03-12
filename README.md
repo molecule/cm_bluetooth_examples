@@ -4,8 +4,14 @@
 #### Buggy_Blink
 A piece of example code for debugging. Used for a lecture demonstration.
 
-#### simple-bt-example
-Example code based on Adafruit's excellent bleuart_datamode code. This simplifies things for our M0 board. Reads from an attached Force Sensor, and sends the reading to the attached phone over Bluetooth.
+#### read-sensor-send-bt
+Reads from an attached Force Sensor, and sends the reading to the attached phone over Bluetooth. Example code based on Adafruit's excellent bleuart_datamode code. This simplifies things for our M0 board. 
+
+#### rx-from-bt
+Receives a message from the device connected over bluetooth. Example code based on Adafruit's excellent bleuart_datamode code. This simplifies things for our M0 board.
+
+#### simple-led-control
+Triggers one of 3 LED patterns when a 1, 2, or 3 is sent from the central device over bluetooth to the Arduino. Example code based on Adafruit's excellent bleuart_datamode code. This simplifies things for our M0 board.
 
 #### heartrate_central.js
 - example of how to write a central in javascript; responds to a "notify" property
